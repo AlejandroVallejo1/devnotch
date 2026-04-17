@@ -78,7 +78,7 @@ struct PreferencesView: View {
                     tint: .yellow,
                     title: "Star on GitHub",
                     subtitle: "Support the project with a star",
-                    url: "https://github.com/AlejandroVallejo1/claudenotch"
+                    url: "https://github.com/AlejandroVallejo1/devnotch"
                 )
                 SupportLinkRow(
                     symbol: "cup.and.saucer.fill",
@@ -92,7 +92,7 @@ struct PreferencesView: View {
                     tint: .red,
                     title: "Report a Bug",
                     subtitle: "Open a GitHub issue",
-                    url: "https://github.com/AlejandroVallejo1/claudenotch/issues/new"
+                    url: "https://github.com/AlejandroVallejo1/devnotch/issues/new"
                 )
             }
         }

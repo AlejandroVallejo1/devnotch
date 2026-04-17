@@ -61,11 +61,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func installStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        let image = NSImage(systemSymbolName: "chart.bar.fill", accessibilityDescription: "ClaudeNotch")
+        let image = NSImage(systemSymbolName: "chart.bar.fill", accessibilityDescription: "DevNotch")
         image?.isTemplate = true
         item.button?.image = image
         item.button?.imagePosition = .imageOnly
-        item.button?.toolTip = "ClaudeNotch"
+        item.button?.toolTip = "DevNotch"
 
         let menu = NSMenu()
         let toggleItem = NSMenuItem(title: "Toggle notch", action: #selector(toggleNotch), keyEquivalent: "t")
@@ -96,7 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(prefsItem)
         menu.addItem(.separator())
         // No explicit target -> routed through the responder chain to NSApp
-        menu.addItem(NSMenuItem(title: "Quit ClaudeNotch", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit DevNotch", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         item.menu = menu
         statusItem = item
     }

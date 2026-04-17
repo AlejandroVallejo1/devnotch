@@ -3,7 +3,7 @@ import Security
 
 /// Tiny wrapper over Keychain Services for storing a single string under (service, account).
 enum Keychain {
-    static let service = "com.alejandrovallejo.ClaudeNotch"
+    static let service = "com.alejandrovallejo.DevNotch"
 
     static func set(_ value: String, for account: String) {
         let data = Data(value.utf8)

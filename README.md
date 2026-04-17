@@ -1,15 +1,20 @@
-# ClaudeNotch
+# DevNotch
 
-> Your Mac's notch, as a live Claude usage dashboard.
+> Resume any Claude Code conversation with one click. Live Claude usage in your Mac's notch.
 
-Hover over your notch. See your real **claude.ai** plan meter — the same 5-hour
-session %, weekly %, Sonnet-only quota, and pay-as-you-go credits that the web
-app shows. See every Claude Code session from today with a one-click
-`claude --resume` ready to paste in your terminal.
+Built for developers who live in Claude Code and lose track of which session had the context they need.
+
+**One-click session resume.** Your Sessions tab lists every Claude Code conversation
+from today — with the **first thing you typed** as the title so you remember what
+it was. Click any row and your clipboard gets `cd <cwd> && claude --resume <id>`.
+Paste it in any terminal and you're back with full context, in the right working
+directory, on the right git branch.
+
+**Live plan meter.** Hover the notch → see the real numbers from your claude.ai
+account: 5-hour session %, weekly %, Sonnet-only, extra credits. Same data as the
+web dashboard, no context-switch needed.
 
 Minimal. Local. Open source. Not affiliated with Anthropic.
-
-![preview](docs/preview.png)
 
 ## Install
 
@@ -18,54 +23,59 @@ Minimal. Local. Open source. Not affiliated with Anthropic.
 **From source (unsigned, fastest):**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/AlejandroVallejo1/claudenotch/main/Scripts/install-from-source.sh | bash
+curl -fsSL https://raw.githubusercontent.com/AlejandroVallejo1/devnotch/main/Scripts/install-from-source.sh | bash
 ```
 
 The installer uses Xcode command-line tools + Homebrew's `xcodegen` to build
-the app locally and drop it into `/Applications`. First launch macOS will ask
+the app locally and drop it into `/Applications`. First launch, macOS will ask
 you to allow it (unsigned app) — right-click → Open.
 
 **Manual build:**
 
 ```bash
-git clone https://github.com/AlejandroVallejo1/claudenotch.git
-cd claudenotch
+git clone https://github.com/AlejandroVallejo1/devnotch.git
+cd devnotch
 brew install xcodegen
 xcodegen
-open ClaudeNotch.xcodeproj   # then ⌘R in Xcode
+open DevNotch.xcodeproj   # then ⌘R in Xcode
 ```
 
-## What you get
+## The feature nobody else has: one-click resume
 
-### Live plan meter
-Connect your claude.ai account once (**Menu bar 📊 → Connect to claude.ai…**)
-and the notch shows the real numbers from your account:
+Claude Code tells you *how* to resume a session — you just never want to go
+copy-paste from the log file. DevNotch makes it a click:
+
+1. Click the Sessions tab
+2. Find the conversation — it's titled by **what you actually asked**
+   ("Fix the auth bug in `login.swift`"), not by session ID
+3. Click the row → clipboard gets `cd <cwd> && claude --resume <id>`
+4. Paste in terminal → you're back where you left off
+
+Each row shows: **project · git branch · state (thinking / running Bash / idle) ·
+time since last activity · tokens spent**. At a glance you know which conversation
+was which.
+
+## Live claude.ai plan meter
+
+**Connect your claude.ai account once** (Menu bar 📊 → Connect to claude.ai…)
+and the notch shows the same real numbers your claude.ai dashboard shows:
 
 - **Current session** (5h rolling window) with reset countdown
 - **Weekly** usage across all models
 - **Sonnet-only** weekly quota
 - **Extra credits** (pay-as-you-go) with dollar amount spent
 
-When you're not connected, the app falls back to parsing your local
+When you're not connected, DevNotch falls back to parsing your local
 `~/.claude/projects/` logs and estimating usage from pricing-weighted tokens.
 
-### Developer-aware sessions
-The Sessions tab lists every Claude Code session you ran today:
+## Notifications
 
-- Top line: the **first message you typed** — so you know which conversation
-  was which
-- Bottom meta: **project**, **git branch**, current **state**
-  (thinking / running tool / idle), time since last activity, tokens spent
-- Click any row → clipboard gets `cd <cwd> && claude --resume <id>`.
-  Paste it in any terminal to resume that exact conversation, with full context.
-
-### Notifications
-Native system notification when you hit 80% of your session or weekly quota
-(configurable in Preferences).
+Native system notification when you hit a configurable threshold (default 80%)
+of your session or weekly quota.
 
 ## How your data is used
 
-Short version: **only by you, only locally.** Longer version in
+Short version: **only by you, only locally.** Full details in
 [`PRIVACY.md`](PRIVACY.md).
 
 - `~/.claude/projects/` is read on your Mac and never leaves it.
@@ -77,19 +87,19 @@ Short version: **only by you, only locally.** Longer version in
 You can verify all of this by reading `Features/Auth/` and `Features/Usage/` —
 it's ~400 lines of Swift.
 
-## Frequently asked
+## FAQ
 
 **Does this talk to any server I don't control?**  
 No. The only network destination is `https://claude.ai/`, using *your* cookie,
 and only when you explicitly sign in.
 
-**What happens if Anthropic changes the endpoint?**  
+**What if Anthropic changes the endpoint?**  
 Live data stops. The app degrades gracefully to local estimates from Claude Code
-logs until we ship an update.
+logs until the next update.
 
 **Does it work without Claude Code?**  
-Yes — the live-meter feature only needs a claude.ai account. Sessions tab needs
-Claude Code because that's where sessions live.
+The live-meter feature only needs a claude.ai account. The session-resume feature
+obviously needs Claude Code, because that's where the sessions come from.
 
 **Why weighted tokens in the fallback?**  
 Raw tokens are dominated by cache reads (which are billed at 10% of input).
@@ -99,17 +109,17 @@ bar roughly tracks the real plan meter.
 
 **Is this legal?**  
 See [`DISCLAIMER.md`](DISCLAIMER.md). Short: unofficial, uses your own
-authenticated session. Anthropic could change the endpoints at any time.
+authenticated session. Anthropic could change the endpoint at any time.
 
 ## Contributing
 
-Issues and PRs welcome. If Anthropic changes the usage endpoint and live
-breaks, the fix is usually a one-line change in
-`ClaudeNotch/Features/Auth/ClaudeWebAPI.swift`.
+Issues and PRs welcome. If Anthropic rotates the usage endpoint, the fix is
+usually a one-line change in `ClaudeNotch/Features/Auth/ClaudeWebAPI.swift`.
 
 ## Support
 
-If this saves you time, consider a ⭐ on GitHub or a [coffee](https://buymeacoffee.com/alejandrovallejo).
+If DevNotch saves you time, a ⭐ on GitHub or a
+[coffee](https://buymeacoffee.com/alejandrovallejo) keeps updates shipping.
 
 ## License
 
@@ -122,4 +132,4 @@ MIT — see [`LICENSE`](LICENSE).
 - [`SECURITY.md`](SECURITY.md) — responsible disclosure.
 
 "Claude" and "Anthropic" are trademarks of Anthropic PBC, used nominatively.
-ClaudeNotch is not affiliated with, endorsed by, or approved by Anthropic.
+DevNotch is not affiliated with, endorsed by, or approved by Anthropic.

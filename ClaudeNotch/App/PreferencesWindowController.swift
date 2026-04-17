@@ -17,7 +17,7 @@ final class PreferencesWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "ClaudeNotch — Preferences"
+        window.title = "DevNotch — Preferences"
         window.isReleasedWhenClosed = false
         window.center()
         window.contentView = NSHostingView(

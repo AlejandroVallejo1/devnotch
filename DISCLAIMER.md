@@ -1,6 +1,6 @@
 # Disclaimer
 
-ClaudeNotch is an **independent, unofficial** tool. It is not affiliated with,
+DevNotch is an **independent, unofficial** tool. It is not affiliated with,
 endorsed by, sponsored by, or approved by Anthropic PBC or any of its
 affiliates. "Claude" and "Anthropic" are trademarks of Anthropic PBC, used here
 nominatively only to identify the service this tool integrates with.
@@ -17,7 +17,7 @@ This software is provided "as is", **without warranty of any kind**. See the
 
 ## How it works (honest summary)
 
-ClaudeNotch reads:
+DevNotch reads:
 - your local Claude Code logs under `~/.claude/projects/` (always);
 - your claude.ai plan-meter data via an **undocumented internal endpoint** on
   `https://claude.ai/`, **only** after you explicitly sign in through the
@@ -32,7 +32,7 @@ specifics.
 Automated access to undocumented API endpoints of claude.ai exists in a grey
 area of Anthropic's terms. Anthropic may, at their discretion, change the API,
 disable cookie-based access for non-browser clients, or ask for the tool to be
-modified or removed. By using ClaudeNotch you accept that the live-data feature
+modified or removed. By using DevNotch you accept that the live-data feature
 may stop working at any time without notice.
 
 If you represent Anthropic and have concerns, please open an issue on this
@@ -40,5 +40,5 @@ repository — we will cooperate promptly.
 
 ## No monetization of Anthropic's data
 
-ClaudeNotch is open source and does not resell, proxy, or redistribute any
+DevNotch is open source and does not resell, proxy, or redistribute any
 data returned by claude.ai. It is a local viewer for your own account.

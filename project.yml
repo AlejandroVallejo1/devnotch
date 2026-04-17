@@ -1,4 +1,4 @@
-name: ClaudeNotch
+name: DevNotch
 options:
   bundleIdPrefix: com.alejandrovallejo
   deploymentTarget:
@@ -14,7 +14,7 @@ settings:
     CODE_SIGN_STYLE: Automatic
 
 targets:
-  ClaudeNotch:
+  DevNotch:
     type: application
     platform: macOS
     sources:
@@ -29,7 +29,7 @@ targets:
       properties:
         LSUIElement: true
         NSHumanReadableCopyright: "© 2026 Alejandro Vallejo"
-        CFBundleDisplayName: ClaudeNotch
+        CFBundleDisplayName: DevNotch
         NSUserNotificationAlertStyle: alert
     entitlements:
       path: ClaudeNotch/ClaudeNotch.entitlements
@@ -38,7 +38,7 @@ targets:
         com.apple.security.automation.apple-events: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.alejandrovallejo.ClaudeNotch
+        PRODUCT_BUNDLE_IDENTIFIER: com.alejandrovallejo.DevNotch
         ENABLE_HARDENED_RUNTIME: true
         CODE_SIGN_ENTITLEMENTS: ClaudeNotch/ClaudeNotch.entitlements
     dependencies:

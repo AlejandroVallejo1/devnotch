@@ -2,7 +2,7 @@
 
 *Last updated: 2026-04-16*
 
-ClaudeNotch is a **local, client-only** macOS app. This document explains, in plain
+DevNotch is a **local, client-only** macOS app. This document explains, in plain
 terms, exactly what data the app touches and where it goes.
 
 ## Short version
@@ -29,7 +29,7 @@ terms, exactly what data the app touches and where it goes.
 When you use *Connect to claude.ai…*, the app opens Anthropic's real login page inside
 a `WKWebView`. When you finish signing in, the app captures the `sessionKey` cookie
 that claude.ai itself set in that webview and stores it in the macOS Keychain under
-service identifier `com.alejandrovallejo.ClaudeNotch`.
+service identifier `com.alejandrovallejo.DevNotch`.
 
 After that, the app periodically (every 45 s by default) sends a single HTTPS `GET`
 request to:
@@ -52,7 +52,7 @@ that response to anyone.
 - **Sign out** at any time from Preferences → Claude account → Sign out. This deletes
   the session cookie from your Keychain.
 - **Uninstall** the app by dragging it to the Trash and, if you want to wipe state,
-  delete `~/Library/Preferences/com.alejandrovallejo.ClaudeNotch.plist`.
+  delete `~/Library/Preferences/com.alejandrovallejo.DevNotch.plist`.
 - The Keychain item is protected by macOS at rest and unlocked only while your user
   session is unlocked (`kSecAttrAccessibleAfterFirstUnlock`).
 
