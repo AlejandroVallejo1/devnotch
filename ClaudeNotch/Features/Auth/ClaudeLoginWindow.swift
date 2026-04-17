@@ -101,10 +101,9 @@ final class ClaudeLoginWindowController: NSWindowController, WKNavigationDelegat
     private func evaluate(cookies: [HTTPCookie], source: String, force: Bool = false) {
         guard !captured else { return }
         let claudeCookies = cookies.filter { $0.domain.contains("claude.ai") }
-        NSLog("[ClaudeNotch] cookie check (%@): %d claude.ai cookies — %@",
-              source,
-              claudeCookies.count,
-              claudeCookies.map { "\($0.name)=…" }.joined(separator: ", "))
+        #if DEBUG
+        NSLog("[DevNotch] cookie check (%@): %d claude.ai cookies", source, claudeCookies.count)
+        #endif
 
         guard let session = claudeCookies.first(where: { $0.name == "sessionKey" }) else {
             if force {

@@ -52,10 +52,10 @@ final class NotchWindowController: NSWindowController {
 
         // Toggle mouse transparency based on expanded state so tabs and pin
         // receive clicks when open but the whole region is click-through when closed.
-        viewModel.$isHovered.combineLatest(viewModel.$isPinned, viewModel.$volumeHUD)
+        viewModel.$isHovered.combineLatest(viewModel.$isPinned)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] hovered, pinned, hud in
-                let expanded = hovered || pinned || hud != nil
+            .sink { [weak self] hovered, pinned in
+                let expanded = hovered || pinned
                 self?.window?.ignoresMouseEvents = !expanded
             }
             .store(in: &cancellables)

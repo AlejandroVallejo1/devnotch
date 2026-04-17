@@ -3,6 +3,7 @@ import UserNotifications
 
 /// Sends a native notification when usage crosses the configured threshold
 /// (once per session and once per week).
+@MainActor
 final class LimitNotifier {
     private let preferences: Preferences
     private let center = UNUserNotificationCenter.current()

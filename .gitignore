@@ -14,3 +14,8 @@ Package.resolved
 
 # macOS
 .DS_Store
+
+# Env / secrets
+.env
+*.env
+.env.local

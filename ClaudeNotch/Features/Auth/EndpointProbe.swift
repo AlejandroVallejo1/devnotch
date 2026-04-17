@@ -1,9 +1,9 @@
+#if DEBUG
 import AppKit
 import Foundation
 
-/// Probes a list of plausible claude.ai internal endpoints using the stored
-/// session cookie, and reports which ones return usage-like data.
-/// Shows results in a modal alert so we can pick the winning path.
+/// Debug-only: probes candidate claude.ai endpoints using the stored session
+/// cookie so we can discover or recover the live-usage path if it changes.
 @MainActor
 enum EndpointProbe {
     struct Result {
@@ -52,7 +52,7 @@ enum EndpointProbe {
         let winners = results.filter { $0.hasUsageFields }
         var text = "Probed \(results.count) endpoints. \(winners.count) returned usage-like fields.\n\n"
         for r in results {
-            let marker = r.hasUsageFields ? "🎯" : (r.httpStatus == 200 ? "·" : "✗")
+            let marker = r.hasUsageFields ? "*" : (r.httpStatus == 200 ? "·" : "x")
             text += "\(marker) [\(r.httpStatus)] \(r.path)\n"
             if !r.matchedFields.isEmpty {
                 text += "   fields: \(r.matchedFields.prefix(6).joined(separator: ", "))\n"
@@ -83,7 +83,7 @@ enum EndpointProbe {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("sessionKey=\(sessionKey)", forHTTPHeaderField: "Cookie")
         request.setValue("https://claude.ai/", forHTTPHeaderField: "Referer")
-        request.setValue("ClaudeNotch/0.1 (probe)", forHTTPHeaderField: "User-Agent")
+        request.setValue("DevNotch/0.1 (macOS)", forHTTPHeaderField: "User-Agent")
 
         guard let (data, response) = try? await URLSession.shared.data(for: request),
               let http = response as? HTTPURLResponse else {
@@ -131,3 +131,4 @@ enum EndpointProbe {
         alert.runModal()
     }
 }
+#endif

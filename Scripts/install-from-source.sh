@@ -8,19 +8,19 @@
 
 set -euo pipefail
 
-REPO="${DEVNOTCH_REPO:-alexvallejo/devnotch}"
+REPO="${DEVNOTCH_REPO:-AlejandroVallejo1/devnotch}"
 BRANCH="${DEVNOTCH_BRANCH:-main}"
 WORKDIR="${TMPDIR:-/tmp}/devnotch-install-$$"
 
 echo "==> DevNotch installer"
 
 if ! command -v xcodebuild >/dev/null; then
-  echo "❌ Xcode command-line tools are required. Run: xcode-select --install"
+  echo "Error: Xcode command-line tools are required. Run: xcode-select --install"
   exit 1
 fi
 
 if ! command -v brew >/dev/null; then
-  echo "❌ Homebrew is required. Install from https://brew.sh"
+  echo "Error: Homebrew is required. Install from https://brew.sh"
   exit 1
 fi
 
@@ -49,7 +49,7 @@ xcodebuild \
 
 APP_PATH=$(find "$HOME/Library/Developer/Xcode/DerivedData" -type d -name "DevNotch.app" -path "*Release*" | head -n 1)
 if [[ -z "$APP_PATH" ]]; then
-  echo "❌ Could not locate built DevNotch.app"
+  echo "Error: could not locate built DevNotch.app"
   exit 1
 fi
 
@@ -63,4 +63,4 @@ xattr -dr com.apple.quarantine "/Applications/DevNotch.app" 2>/dev/null || true
 echo "==> Launching"
 open "/Applications/DevNotch.app"
 
-echo "✅ Installed. Menu bar icon appears as a small chart bar."
+echo "==> Installed. Menu bar icon appears as a small chart bar."

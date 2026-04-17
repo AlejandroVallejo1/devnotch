@@ -131,7 +131,7 @@ struct ClaudeWebAPI {
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("sessionKey=\(sessionKey)", forHTTPHeaderField: "Cookie")
-        request.setValue("ClaudeNotch/0.1 (macOS)", forHTTPHeaderField: "User-Agent")
+        request.setValue("DevNotch/0.1 (macOS)", forHTTPHeaderField: "User-Agent")
         request.setValue("https://claude.ai/", forHTTPHeaderField: "Referer")
 
         let (data, response) = try await URLSession.shared.data(for: request)

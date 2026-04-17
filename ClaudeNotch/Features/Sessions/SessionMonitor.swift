@@ -247,7 +247,7 @@ final class SessionMonitor: ObservableObject {
         if let cwd {
             return (cwd as NSString).lastPathComponent
         }
-        // Folder names look like "-Users-vallejo-Desktop-crm"; take the last segment.
+        // Folder names look like "-Users-name-path-project"; take the last segment.
         let parts = dir.split(separator: "-")
         return String(parts.last ?? Substring(dir))
     }

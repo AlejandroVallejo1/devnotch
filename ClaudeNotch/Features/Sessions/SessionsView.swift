@@ -177,6 +177,10 @@ struct SessionRow: View {
         }
     }
 
+    private func shellQuote(_ s: String) -> String {
+        "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    }
+
     private func relativeTime(_ date: Date) -> String {
         let elapsed = Date().timeIntervalSince(date)
         if elapsed < 60 { return "just now" }
@@ -184,11 +188,9 @@ struct SessionRow: View {
     }
 
     private func copyResumeCommand() {
-        // `claude --resume <id>` restores the exact session from Claude Code.
-        // Prefix with a `cd` so pasting in any terminal lands in the right cwd.
         let command: String
         if let cwd = session.cwd {
-            command = "cd \"\(cwd)\" && claude --resume \(session.id)"
+            command = "cd \(shellQuote(cwd)) && claude --resume \(session.id)"
         } else {
             command = "claude --resume \(session.id)"
         }

@@ -28,8 +28,8 @@ jobs:
       - name: Build (unsigned)
         run: |
           xcodebuild \
-            -project ClaudeNotch.xcodeproj \
-            -scheme ClaudeNotch \
+            -project DevNotch.xcodeproj \
+            -scheme DevNotch \
             -configuration Release \
             -destination 'platform=macOS' \
             CODE_SIGN_IDENTITY="" \
@@ -40,7 +40,7 @@ jobs:
       - name: Locate .app
         id: locate
         run: |
-          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -type d -name "ClaudeNotch.app" -path "*Release*" | head -n 1)
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -type d -name "DevNotch.app" -path "*Release*" | head -n 1)
           echo "Found: $APP_PATH"
           echo "app_path=$APP_PATH" >> "$GITHUB_OUTPUT"
 
@@ -50,19 +50,19 @@ jobs:
           brew install create-dmg
           mkdir -p dist
           create-dmg \
-            --volname "ClaudeNotch" \
+            --volname "DevNotch" \
             --window-size 520 360 \
             --icon-size 96 \
-            --icon "ClaudeNotch.app" 160 180 \
+            --icon "DevNotch.app" 160 180 \
             --app-drop-link 360 180 \
-            --hide-extension "ClaudeNotch.app" \
-            "dist/ClaudeNotch-${{ github.ref_name }}.dmg" \
+            --hide-extension "DevNotch.app" \
+            "dist/DevNotch-${{ github.ref_name }}.dmg" \
             "${{ steps.locate.outputs.app_path }}"
 
       - name: Upload .app artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ClaudeNotch.app
+          name: DevNotch.app
           path: ${{ steps.locate.outputs.app_path }}
           if-no-files-found: error
 

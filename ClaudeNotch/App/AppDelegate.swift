@@ -16,7 +16,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // Services
     private var usageTracker: UsageTracker!
     private var sessionMonitor: SessionMonitor!
-    private var volumeService: VolumeService!
     private var limitNotifier: LimitNotifier!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -24,19 +23,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         usageTracker = UsageTracker()
         sessionMonitor = SessionMonitor()
-        volumeService = VolumeService()
         limitNotifier = LimitNotifier(preferences: preferences)
 
         viewModel.wire(
             usage: usageTracker,
             sessions: sessionMonitor,
-            volume: volumeService,
             preferences: preferences
         )
-
-        volumeService.onChange = { [weak self] level in
-            self?.viewModel.showVolumeHUD(level: level)
-        }
 
         usageTracker.$snapshot
             .sink { [weak self] snapshot in
@@ -46,7 +39,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         usageTracker.start()
         sessionMonitor.start()
-        volumeService.start()
 
         installWindow()
         installStatusItem()
@@ -78,9 +70,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let refreshItem = NSMenuItem(title: "Refresh live now", action: #selector(refreshLiveNow), keyEquivalent: "r")
         refreshItem.target = self
         menu.addItem(refreshItem)
-        // Developer items are hidden unless the user holds Option while opening
-        // the status-bar menu (see `menuNeedsUpdate`). Shipped so we can iterate
-        // if Anthropic rotates endpoints, but invisible to regular users.
+        #if DEBUG
+        // Developer submenu: hidden unless Option is held (see `menuNeedsUpdate`).
         let debugMenu = NSMenu()
         let probeItem = NSMenuItem(title: "Probe claude.ai endpoints", action: #selector(probeEndpoints), keyEquivalent: "")
         probeItem.target = self
@@ -89,6 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         debugHeader.submenu = debugMenu
         debugHeader.isHidden = true
         menu.addItem(debugHeader)
+        #endif
 
         menu.delegate = self
         let prefsItem = NSMenuItem(title: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
@@ -122,12 +114,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // MARK: - NSMenuDelegate
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        // Reveal the "Developer" submenu only if Option is held. Standard
-        // macOS pattern for hidden debug items.
+        #if DEBUG
         let optionDown = NSEvent.modifierFlags.contains(.option)
         for item in menu.items where item.title == "Developer" {
             item.isHidden = !optionDown
         }
+        #endif
     }
 
     @objc private func openPreferences() {
@@ -141,11 +133,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         ClaudeLoginWindowController.shared.present()
     }
 
+    #if DEBUG
     @objc private func probeEndpoints() {
         Task { @MainActor in
             await EndpointProbe.run()
         }
     }
+    #endif
 
     @objc private func refreshLiveNow() {
         usageTracker.refreshLive()
@@ -155,7 +149,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let snap = usageTracker.snapshot
             let alert = NSAlert()
             if snap.isLive {
-                alert.messageText = "Live data ✅"
+                alert.messageText = "Live data"
                 alert.informativeText = """
                 Session: \(Int((snap.live?.sessionPercent ?? 0) * 100))%
                 Weekly: \(snap.live?.weeklyPercent.map { "\(Int($0 * 100))%" } ?? "n/a")
@@ -163,7 +157,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 """
                 alert.alertStyle = .informational
             } else if let err = snap.liveError {
-                alert.messageText = "Live fetch failed ❌"
+                alert.messageText = "Live fetch failed"
                 alert.informativeText = err
                 alert.alertStyle = .warning
             } else {

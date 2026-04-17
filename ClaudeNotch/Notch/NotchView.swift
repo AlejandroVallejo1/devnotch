@@ -9,10 +9,7 @@ struct NotchRootView: View {
             Color.clear
 
             NotchContainer(isExpanded: vm.isExpanded, collapsedSize: collapsedSize) {
-                if let hud = vm.volumeHUD, !vm.isHovered && !vm.isPinned {
-                    VolumeHUDView(state: hud)
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                } else if vm.isExpanded {
+                if vm.isExpanded {
                     ExpandedContent()
                         .transition(.opacity)
                 } else {

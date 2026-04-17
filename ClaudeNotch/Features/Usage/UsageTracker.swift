@@ -11,7 +11,7 @@ final class UsageTracker: ObservableObject {
     private let fileManager = FileManager.default
     private var localTimer: Timer?
     private var liveTimer: Timer?
-    private let workQueue = DispatchQueue(label: "com.claudenotch.usage", qos: .utility)
+    private let workQueue = DispatchQueue(label: "com.devnotch.usage", qos: .utility)
     private var cancellables = Set<AnyCancellable>()
 
     private var claudeProjectsURL: URL {
@@ -66,7 +66,9 @@ final class UsageTracker: ObservableObject {
 
     func refreshLive() {
         guard let sessionKey = ClaudeAuth.shared.sessionKey else {
-            NSLog("[ClaudeNotch] refreshLive: no session key, skipping")
+            #if DEBUG
+            NSLog("[DevNotch] refreshLive: no session key, skipping")
+            #endif
             if snapshot.live != nil || snapshot.liveError != nil {
                 var s = snapshot
                 s.live = nil
@@ -76,14 +78,10 @@ final class UsageTracker: ObservableObject {
             return
         }
         let orgUUID = ClaudeAuth.shared.organizationUUID
-        NSLog("[ClaudeNotch] refreshLive: fetching (orgUUID=%@)", orgUUID ?? "nil")
         Task { [weak self] in
             let api = ClaudeWebAPI(sessionKey: sessionKey, organizationUUID: orgUUID)
             do {
                 let result = try await api.fetchRateLimit()
-                NSLog("[ClaudeNotch] refreshLive: ✅ session=%.1f%% weekly=%@",
-                      result.sessionPercent * 100,
-                      result.weeklyPercent.map { String(format: "%.1f%%", $0 * 100) } ?? "nil")
                 await MainActor.run {
                     guard let self else { return }
                     var s = self.snapshot
@@ -105,7 +103,9 @@ final class UsageTracker: ObservableObject {
                     self.snapshot = s
                 }
             } catch {
-                NSLog("[ClaudeNotch] refreshLive: ❌ %@", String(describing: error))
+                #if DEBUG
+                NSLog("[DevNotch] refreshLive failed: %@", String(describing: error))
+                #endif
                 await MainActor.run {
                     guard let self else { return }
                     var s = self.snapshot

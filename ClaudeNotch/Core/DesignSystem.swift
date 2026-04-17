@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Anthropic-inspired color palette and typography helpers.
-/// Colors are sampled from Anthropic's public brand (claude.ai, anthropic.com).
+/// Color palette and typography helpers.
 enum DS {
     // MARK: - Colors
     enum Palette {

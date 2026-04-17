@@ -3,12 +3,10 @@ import SwiftUI
 /// A rounded-rectangle pill matching the visual language of the MBP notch.
 /// Extra corner rounding at the bottom so expanded content feels connected.
 struct NotchShape: Shape {
-    var topCornerRadius: CGFloat = 10
     var bottomCornerRadius: CGFloat = 18
 
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        let tr = topCornerRadius
         let br = bottomCornerRadius
 
         path.move(to: CGPoint(x: rect.minX, y: rect.minY))
@@ -24,10 +22,6 @@ struct NotchShape: Shape {
             control: CGPoint(x: rect.minX, y: rect.maxY)
         )
         path.closeSubpath()
-
-        // Top corners of actual hardware notch — clip the top two edges slightly inward
-        // so the silhouette hugs the physical notch curve.
-        _ = tr
         return path
     }
 }
