@@ -42,6 +42,11 @@ open DevNotch.xcodeproj   # then ⌘R in Xcode
 
 ## The feature nobody else has: one-click resume
 
+![live plan meter](docs/preview-usage.png)
+
+<img width="1470" height="801" alt="Screenshot 2026-04-16 at 6 16 31 p m" src="https://github.com/user-attachments/assets/19745cad-cfcc-4911-b666-8e2df28d339c" />
+
+
 Claude Code tells you *how* to resume a session — you just never want to go
 copy-paste from the log file. DevNotch makes it a click:
 
@@ -57,7 +62,8 @@ was which.
 
 ## Live claude.ai plan meter
 
-![live plan meter](docs/preview-usage.png)
+<img width="1470" height="800" alt="Screenshot 2026-04-16 at 6 16 48 p m" src="https://github.com/user-attachments/assets/b238ef6e-125e-47b2-a4ff-a4e6a22706bc" />
+
 
 **Connect your claude.ai account once** (Menu bar 📊 → Connect to claude.ai…)
 and the notch shows the same real numbers your claude.ai dashboard shows:
