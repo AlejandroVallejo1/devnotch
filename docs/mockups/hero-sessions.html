@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DevNotch — Sessions hero</title>
+<style>
+  /* Anthropic-inspired palette matching DS.swift */
+  :root {
+    --bg: #1A1918;
+    --surface: #26231F;
+    --surface-2: #2F2B27;
+    --divider: rgba(255,255,255,0.06);
+    --cream: #F5F1E8;
+    --warm-gray: #8F8B7E;
+    --warm-gray-dim: #5A564F;
+    --coral: #D97757;
+    --blue: #4D7EEB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; }
+
+  body {
+    /* MacBook-ish wallpaper gradient (Sequoia-like warm) */
+    background:
+      radial-gradient(1000px 600px at 20% 0%, #4C3B2E 0%, transparent 60%),
+      radial-gradient(1200px 800px at 80% 100%, #2B3C4C 0%, transparent 60%),
+      linear-gradient(180deg, #1F1A18 0%, #0E0C0A 100%);
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Fake IDE / terminal window centered in the background to set context */
+  .ide {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    width: 1100px;
+    max-width: 90vw;
+    height: 680px;
+    background: #1E1D1B;
+    border-radius: 14px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.55),
+      0 10px 30px rgba(0,0,0,0.4),
+      inset 0 0 0 0.5px rgba(255,255,255,0.07);
+    overflow: hidden;
+    opacity: 0.94;
+  }
+  .ide__bar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: #161513;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    gap: 6px;
+  }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl.red { background: #FF5F57; }
+  .tl.yel { background: #FEBC2E; }
+  .tl.grn { background: #28C840; }
+  .ide__title {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--warm-gray);
+    letter-spacing: 0.2px;
+  }
+
+  .ide__body {
+    display: grid;
+    grid-template-columns: 200px 1fr 420px;
+    height: calc(100% - 36px);
+    font-family: "JetBrains Mono", "SF Mono", Menlo, monospace;
+    font-size: 12px;
+  }
+
+  /* Sidebar — fake file tree */
+  .sidebar {
+    background: #1A1918;
+    border-right: 1px solid rgba(255,255,255,0.04);
+    padding: 12px 10px;
+    color: var(--warm-gray);
+  }
+  .sidebar .file { padding: 3px 8px; border-radius: 4px; }
+  .sidebar .file.open { background: rgba(77,126,235,0.18); color: var(--cream); }
+  .sidebar .dir { color: var(--warm-gray-dim); margin-top: 10px; }
+
+  /* Editor */
+  .editor {
+    padding: 16px 20px;
+    background: #1E1D1B;
+    line-height: 1.65;
+    color: #D6CFBE;
+  }
+  .kw { color: #D97757; }        /* keyword — Anthropic coral */
+  .typ { color: #C9A959; }       /* type — mustard */
+  .str { color: #7FA876; }       /* string — olive */
+  .num { color: #4D7EEB; }       /* number — blue */
+  .fn { color: #E4B078; }        /* function */
+  .cm { color: #5A564F; font-style: italic; }
+  .ln { color: #3D3A34; display: inline-block; width: 28px; text-align: right; padding-right: 12px; user-select: none; }
+
+  /* Terminal pane */
+  .term {
+    background: #151412;
+    border-left: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 16px;
+    color: var(--cream);
+  }
+  .term .prompt { color: var(--blue); }
+  .term .cmd { color: var(--cream); }
+  .term .out { color: var(--warm-gray); }
+  .term .tag { color: var(--coral); }
+  .term .row { margin-bottom: 6px; line-height: 1.55; }
+
+  /* ---------- The DevNotch pill ---------- */
+  .notch-wrap {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,0.55));
+  }
+  .pill {
+    width: 560px;
+    background: var(--bg);
+    color: var(--cream);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 22px;
+    border-bottom-right-radius: 22px;
+    padding-top: 2px;
+    outline: 0.5px solid rgba(255,255,255,0.04);
+  }
+
+  .pill__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px 6px;
+    border-bottom: 0.5px solid var(--divider);
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: var(--warm-gray);
+    font-size: 10px;
+    font-weight: 500;
+    cursor: default;
+  }
+  .tab.active {
+    background: rgba(217,119,87,0.18);
+    color: var(--coral);
+  }
+  .tab svg { width: 11px; height: 11px; }
+  .spacer { flex: 1; }
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    color: var(--coral);
+    font-size: 9px;
+    font-weight: 600;
+  }
+  .live::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+  .pin {
+    width: 24px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--warm-gray);
+  }
+
+  .pill__body {
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .session-hdr {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .session-hdr .running {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "New York", Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream);
+  }
+  .session-hdr .dot-blue {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+  .session-hdr .meta {
+    font-size: 9px;
+    color: var(--warm-gray-dim);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    background: var(--surface);
+    border-radius: 8px;
+  }
+  .row .indicator {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .row .indicator .core {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .row.running .core { background: var(--coral); box-shadow: 0 0 0 4px rgba(217,119,87,0.18); }
+  .row.idle .core { background: #C9A959; }
+  .row.ended .core { background: var(--warm-gray-dim); }
+
+  .row .text { min-width: 0; flex: 1; }
+  .row .title {
+    font-family: "New York", Georgia, serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--cream);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row .meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: var(--warm-gray);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .row .meta .project { font-weight: 500; color: var(--warm-gray); }
+  .row .meta .branch { color: var(--blue); font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
+  .row .meta .state { }
+  .row .meta .state.run { color: var(--coral); }
+  .row .meta .state.idle { color: #C9A959; }
+  .row .meta .state.end { color: var(--warm-gray-dim); }
+  .row .meta .sep { color: var(--warm-gray-dim); }
+  .row .meta .dim { color: var(--warm-gray-dim); }
+
+  .row .resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--warm-gray-dim);
+    font-size: 9px;
+    font-weight: 500;
+  }
+
+  /* Copied-highlight variant */
+  .row.copied {
+    background: rgba(77,126,235,0.14);
+  }
+  .row.copied .resume {
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* Tagline overlay for marketing shot */
+  .tagline {
+    position: absolute;
+    left: 50%;
+    bottom: 46px;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+  }
+  .tagline h1 {
+    font-family: "New York", Georgia, serif;
+    font-weight: 600;
+    font-size: 34px;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+  .tagline p {
+    margin-top: 8px;
+    color: var(--warm-gray);
+    font-size: 14px;
+    max-width: 560px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- IDE window in background -->
+  <div class="ide">
+    <div class="ide__bar">
+      <span class="tl red"></span>
+      <span class="tl yel"></span>
+      <span class="tl grn"></span>
+      <span class="ide__title">devnotch — ClaudeNotch/Features/Auth/ClaudeWebAPI.swift</span>
+    </div>
+    <div class="ide__body">
+      <div class="sidebar">
+        <div class="file">📁 ClaudeNotch</div>
+        <div class="dir">▾ App</div>
+        <div class="file" style="padding-left:16px">AppDelegate.swift</div>
+        <div class="file" style="padding-left:16px">NotchWindow…</div>
+        <div class="dir">▾ Features</div>
+        <div class="file" style="padding-left:16px">▾ Auth</div>
+        <div class="file open" style="padding-left:28px">ClaudeWebAPI.swift</div>
+        <div class="file" style="padding-left:28px">ClaudeAuth.swift</div>
+        <div class="file" style="padding-left:16px">▸ Usage</div>
+        <div class="file" style="padding-left:16px">▸ Sessions</div>
+      </div>
+      <div class="editor">
+<pre><span class="ln">12</span><span class="kw">func</span> <span class="fn">fetchRateLimit</span>() <span class="kw">async throws</span> -&gt; <span class="typ">RateLimitSnapshot</span> {
+<span class="ln">13</span>    <span class="kw">guard let</span> orgUUID = organizationUUID <span class="kw">else</span> {
+<span class="ln">14</span>        <span class="kw">throw</span> <span class="typ">APIError</span>.missingOrganization
+<span class="ln">15</span>    }
+<span class="ln">16</span>
+<span class="ln">17</span>    <span class="cm">// /api/organizations/{uuid}/usage returns the same numbers</span>
+<span class="ln">18</span>    <span class="cm">// the claude.ai dashboard reads. Drives the live pill.</span>
+<span class="ln">19</span>    <span class="kw">let</span> json = <span class="kw">try await</span> <span class="fn">getJSON</span>(
+<span class="ln">20</span>        path: <span class="str">"/api/organizations/\(orgUUID)/usage"</span>
+<span class="ln">21</span>    )
+<span class="ln">22</span>
+<span class="ln">23</span>    <span class="kw">guard let</span> dict = json <span class="kw">as</span>? [<span class="typ">String</span>: <span class="typ">Any</span>] <span class="kw">else</span> {
+<span class="ln">24</span>        <span class="kw">throw</span> <span class="typ">APIError</span>.badResponse
+<span class="ln">25</span>    }
+<span class="ln">26</span>
+<span class="ln">27</span>    <span class="kw">let</span> session = <span class="fn">bucket</span>(<span class="str">"five_hour"</span>)
+<span class="ln">28</span>    <span class="kw">let</span> weekly  = <span class="fn">bucket</span>(<span class="str">"seven_day"</span>)
+<span class="ln">29</span>    <span class="kw">let</span> sonnet  = <span class="fn">bucket</span>(<span class="str">"seven_day_sonnet"</span>)
+<span class="ln">30</span>
+<span class="ln">31</span>    <span class="kw">return</span> <span class="typ">RateLimitSnapshot</span>(
+<span class="ln">32</span>        sessionPercent: session?.<span class="num">0</span> ?? <span class="num">0</span>,
+<span class="ln">33</span>        sessionResetsIn: session?.<span class="num">1</span>,
+<span class="ln">34</span>        weeklyPercent: weekly?.<span class="num">0</span>,
+<span class="ln">35</span>        planName: dict[<span class="str">"rate_limit_tier"</span>] <span class="kw">as</span>? <span class="typ">String</span>
+<span class="ln">36</span>    )
+<span class="ln">37</span>}</pre>
+      </div>
+      <div class="term">
+        <div class="row"><span class="prompt">~/Desktop/devnotch</span> <span class="cmd">❯</span> <span class="cmd">claude --resume a3f2b9c8</span></div>
+        <div class="row out">Restoring session <span class="tag">a3f2b9c8</span> from 12 minutes ago…</div>
+        <div class="row out">✓ Loaded 47 messages, 156K tokens of context</div>
+        <div class="row out">✓ Working directory: ~/Desktop/devnotch</div>
+        <div class="row out">✓ Git branch: <span style="color:var(--blue)">feat/live-plan-meter</span></div>
+        <div class="row"><span style="color:var(--coral)">Claude</span>: <span class="out">Continuing — you asked me to</span></div>
+        <div class="row out" style="padding-left:8px">switch the rate_limit parser to</div>
+        <div class="row out" style="padding-left:8px">the new /usage endpoint. Shall I</div>
+        <div class="row out" style="padding-left:8px">keep going from there?</div>
+        <div class="row" style="margin-top:10px"><span class="prompt">~/Desktop/devnotch</span> <span class="cmd">❯</span> <span style="opacity:0.5">█</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The notch, expanded, showing Sessions -->
+  <div class="notch-wrap">
+    <div class="pill">
+      <div class="pill__header">
+        <div class="tab">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 13V9M6 13V5M10 13V7M14 13V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Usage
+        </div>
+        <div class="tab active">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 6l2 2-2 2M8 10h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sessions
+        </div>
+        <div class="spacer"></div>
+        <div class="live">live</div>
+        <div class="pin">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="transform:rotate(45deg)"><path d="M6 2l4 4-1 1 2 2-3 3-2-2-1 1-4-4 1-1-2-2 3-3 2 2 1-1z" stroke="currentColor" stroke-width="1.2"/></svg>
+        </div>
+      </div>
+
+      <div class="pill__body">
+        <div class="session-hdr">
+          <span class="running"><span class="dot-blue"></span>2 running</span>
+          <span class="meta">5 sessions · last 24h</span>
+        </div>
+
+        <!-- copied highlight — THE money shot -->
+        <div class="row running copied">
+          <div class="indicator"><div class="core"></div></div>
+          <div class="text">
+            <div class="title">Fix the timezone bug in `reset_at` parser — resets are off by 6h on Monterrey</div>
+            <div class="meta">
+              <span class="project">devnotch</span>
+              <span class="branch">⎇ main</span>
+              <span class="sep">·</span>
+              <span class="state run">using Edit</span>
+              <span class="sep">·</span>
+              <span class="dim">2m ago</span>
+              <span class="sep">·</span>
+              <span class="dim">42K tok</span>
+            </div>
+          </div>
+          <span class="resume">✓ copied · paste in terminal</span>
+        </div>
+
+        <div class="row running">
+          <div class="indicator"><div class="core"></div></div>
+          <div class="text">
+            <div class="title">Refactor Stripe webhook handler — split invoice.paid from subscription.updated</div>
+            <div class="meta">
+              <span class="project">crm</span>
+              <span class="branch">⎇ feat/stripe-v2</span>
+              <span class="sep">·</span>
+              <span class="state run">using Bash</span>
+              <span class="sep">·</span>
+              <span class="dim">just now</span>
+              <span class="sep">·</span>
+              <span class="dim">156K tok</span>
+            </div>
+          </div>
+          <span class="resume">⌨ resume</span>
+        </div>
+
+        <div class="row idle">
+          <div class="indicator"><div class="core"></div></div>
+          <div class="text">
+            <div class="title">Review PR #1247 — Vaelsa audit v2 shipping checklist</div>
+            <div class="meta">
+              <span class="project">vaelsa-site</span>
+              <span class="branch">⎇ main</span>
+              <span class="sep">·</span>
+              <span class="state idle">idle</span>
+              <span class="sep">·</span>
+              <span class="dim">18m ago</span>
+              <span class="sep">·</span>
+              <span class="dim">8.2K tok</span>
+            </div>
+          </div>
+          <span class="resume">⌨ resume</span>
+        </div>
+
+        <div class="row ended">
+          <div class="indicator"><div class="core"></div></div>
+          <div class="text">
+            <div class="title">Wire up the new /usage endpoint and delete the rate_limits fallback</div>
+            <div class="meta">
+              <span class="project">devnotch</span>
+              <span class="branch">⎇ feat/live-plan-meter</span>
+              <span class="sep">·</span>
+              <span class="state end">ended</span>
+              <span class="sep">·</span>
+              <span class="dim">2h ago</span>
+              <span class="sep">·</span>
+              <span class="dim">312K tok</span>
+            </div>
+          </div>
+          <span class="resume">⌨ resume</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tagline">
+    <h1>Resume yesterday's conversation in one click.</h1>
+    <p>DevNotch turns your Mac's notch into a Claude Code launchpad — every session, titled by what you actually asked, one paste away.</p>
+  </div>
+
+</body>
+</html>

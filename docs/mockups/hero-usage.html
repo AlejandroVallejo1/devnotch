@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DevNotch — Usage hero</title>
+<style>
+  :root {
+    --bg: #1A1918;
+    --surface: #26231F;
+    --divider: rgba(255,255,255,0.06);
+    --cream: #F5F1E8;
+    --warm-gray: #8F8B7E;
+    --warm-gray-dim: #5A564F;
+    --coral: #D97757;
+    --blue: #4D7EEB;
+    --rust: #C96448;
+    --mustard: #C9A959;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    background:
+      radial-gradient(1000px 600px at 30% 0%, #2D4C4A 0%, transparent 60%),
+      radial-gradient(1200px 800px at 80% 100%, #3B2F3F 0%, transparent 60%),
+      linear-gradient(180deg, #14171A 0%, #0A0B0D 100%);
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .notch-wrap {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    filter: drop-shadow(0 14px 32px rgba(0,0,0,0.55));
+  }
+  .pill {
+    width: 520px;
+    background: var(--bg);
+    color: var(--cream);
+    border-bottom-left-radius: 22px;
+    border-bottom-right-radius: 22px;
+    outline: 0.5px solid rgba(255,255,255,0.04);
+  }
+
+  .pill__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px 6px;
+    border-bottom: 0.5px solid var(--divider);
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: var(--warm-gray);
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .tab.active { background: rgba(217,119,87,0.18); color: var(--coral); }
+  .tab svg { width: 11px; height: 11px; }
+  .spacer { flex: 1; }
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    color: var(--coral);
+    font-size: 9px;
+    font-weight: 600;
+  }
+  .live::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--coral); }
+  .pin { width: 24px; height: 22px; display: inline-flex; align-items: center; justify-content: center; color: var(--warm-gray); }
+
+  .pill__body { padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 12px; }
+
+  .block { display: flex; flex-direction: column; gap: 6px; }
+  .block__head { display: flex; align-items: baseline; justify-content: space-between; }
+  .block__title { font-family: "New York", Georgia, serif; font-size: 13px; font-weight: 600; color: var(--cream); }
+  .block__reset { font-size: 10px; color: var(--warm-gray); }
+
+  .bar { height: 7px; background: var(--surface); border-radius: 999px; overflow: hidden; position: relative; }
+  .bar > .fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.3s;
+  }
+  .bar.over .fill { background: var(--rust); }
+  .bar .fill { background: var(--blue); }
+
+  .block__foot {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .block__caption { font-size: 10px; color: var(--warm-gray); }
+  .block__value {
+    font-family: ui-rounded, "SF Pro Rounded", system-ui;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px; font-weight: 600; color: var(--cream);
+  }
+  .block__value.over { color: var(--rust); }
+
+  .tagline {
+    position: absolute;
+    left: 50%;
+    bottom: 76px;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+  }
+  .tagline h1 {
+    font-family: "New York", Georgia, serif;
+    font-weight: 600;
+    font-size: 34px;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+  .tagline p {
+    margin-top: 8px;
+    color: var(--warm-gray);
+    font-size: 14px;
+    max-width: 560px;
+  }
+
+  /* Subtle MacBook screen frame hint */
+  .frame {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.45);
+  }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+
+  <div class="notch-wrap">
+    <div class="pill">
+      <div class="pill__header">
+        <div class="tab active">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 13V9M6 13V5M10 13V7M14 13V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Usage
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 6l2 2-2 2M8 10h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sessions
+        </div>
+        <div class="spacer"></div>
+        <div class="live">live</div>
+        <div class="pin">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="transform:rotate(45deg)"><path d="M6 2l4 4-1 1 2 2-3 3-2-2-1 1-4-4 1-1-2-2 3-3 2 2 1-1z" stroke="currentColor" stroke-width="1.2"/></svg>
+        </div>
+      </div>
+
+      <div class="pill__body">
+        <div class="block">
+          <div class="block__head">
+            <span class="block__title">Current session</span>
+            <span class="block__reset">resets in 1h 28m</span>
+          </div>
+          <div class="bar"><div class="fill" style="width: 65%"></div></div>
+          <div class="block__foot">
+            <span class="block__caption">65% of plan</span>
+            <span class="block__value">65%</span>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block__head">
+            <span class="block__title">Weekly</span>
+            <span class="block__reset">resets in 163h</span>
+          </div>
+          <div class="bar"><div class="fill" style="width: 6%"></div></div>
+          <div class="block__foot">
+            <span class="block__caption">6% of plan</span>
+            <span class="block__value">6%</span>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block__head">
+            <span class="block__title">Sonnet only</span>
+            <span class="block__reset">resets in 163h</span>
+          </div>
+          <div class="bar"><div class="fill" style="width: 12%"></div></div>
+          <div class="block__foot">
+            <span class="block__caption">weekly Sonnet quota</span>
+            <span class="block__value">12%</span>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block__head">
+            <span class="block__title">Extra credits</span>
+            <span class="block__reset">resets on May 1</span>
+          </div>
+          <div class="bar over"><div class="fill" style="width: 100%"></div></div>
+          <div class="block__foot">
+            <span class="block__caption">$41.59 USD spent</span>
+            <span class="block__value over">104%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tagline">
+    <h1>The plan meter, where you already look.</h1>
+    <p>Real session %, weekly quota, Sonnet-only, and pay-as-you-go credits — pulled straight from your claude.ai account, rendered into your Mac's notch.</p>
+  </div>
+</body>
+</html>
