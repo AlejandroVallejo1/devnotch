@@ -57,6 +57,8 @@ was which.
 
 ## Live claude.ai plan meter
 
+![live plan meter](docs/preview-usage.png)
+
 **Connect your claude.ai account once** (Menu bar 📊 → Connect to claude.ai…)
 and the notch shows the same real numbers your claude.ai dashboard shows:
 
